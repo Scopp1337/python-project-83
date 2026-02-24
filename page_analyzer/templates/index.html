@@ -5,28 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Анализатор страниц</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
     <div class="container">
-        <h1 class="text-center mt-5">Анализатор страниц</h1>
+        <div class="card shadow-lg border-0 rounded-4 mt-5">
+            <div class="card-body p-5">
 
-        <form class="mt-5">
-            <div class="row justify-content-center">
-                <div class="col-8">
-                    <input type="url"
-                           class="form-control"
-                           placeholder="https://www.example.com"
-                           required>
-                </div>
-                <div class="col-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        Проверить
-                    </button>
-                </div>
+                <!-- Заголовок с увеличенной толщиной текста -->
+                <h1 class="display-3 text-center mb-4 text-dark fw-bold">
+                    Анализатор страниц
+                </h1>
+
+                <!-- Подзаголовок -->
+                <p class="lead text-center text-muted mb-5">
+                    Проверьте сайт на SEO-пригодность
+                </p>
+
+                <!-- Форма -->
+                <form class="mt-5">
+                    <div class="row justify-content-center g-3">
+                        <div class="col-md-8">
+                            <div class="input-group input-group-lg">
+                                <input type="url"
+                                       class="form-control form-control-lg border-2 shadow-sm"
+                                       placeholder="https://www.example.com"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 shadow">
+                                Проверить
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Подсказка -->
+                <p class="text-center text-muted small mt-4">
+                    Например: https://ru.hexlet.io, https://www.google.com
+                </p>
             </div>
-        </form>
+        </div>
     </div>
 </body>
 </html>
