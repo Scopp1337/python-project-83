@@ -21,6 +21,7 @@
                     <tr>
                         <td>{{ url.id }}</td>
                         <td>
+                            <!-- Ссылка на детальную страницу URL -->
                             <a href="{{ url_for('get_url', id=url.id) }}" class="text-decoration-none">
                                 {{ url.name }}
                             </a>

@@ -16,14 +16,13 @@ from dotenv import load_dotenv
 from page_analyzer.validator import normalize_url, validate_url
 from page_analyzer.repository import UrlRepository
 
-
-
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 DATABASE_URL = os.getenv('DATABASE_URL')
+conn = psycopg2.connect(DATABASE_URL)
 
 
 @app.route('/')
