@@ -1,33 +1,52 @@
-from psycopg2.extras import DictCursor
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+
+class DatabaseConnection:
+    def __init__(self, database_url):
+        self.database_url = database_url
+
+    def __enter__(self):
+        self.conn = psycopg2.connect(
+            self.database_url,
+            cursor_factory=RealDictCursor
+        )
+        return self.conn.cursor()
+
+    def __exit__(self, type, value, traceback):
+        if type is None:
+            self.conn.commit()
+        else:
+            self.conn.rollback()
+        self.conn.close()
 
 
 class UrlRepository:
-    def __init__(self, conn):
-        self.conn = conn
+    def __init__(self, db_url):
+        self.db_url = db_url
 
     def add_url(self, url):
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+        with DatabaseConnection(self.db_url) as cur:
             cur.execute(
                 "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id",
                 (url,)
             )
-            id = cur.fetchone()["id"]
-            self.conn.commit()
-            return id
+            result = cur.fetchone()
+            return result['id']
 
     def get_all_urls(self):
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+        with DatabaseConnection(self.db_url) as cur:
             cur.execute("SELECT * FROM urls ORDER BY id DESC")
             return [dict(row) for row in cur]
 
     def find_id(self, id):
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+        with DatabaseConnection(self.db_url) as cur:
             cur.execute("SELECT * FROM urls WHERE id = %s", (id,))
             row = cur.fetchone()
             return dict(row) if row else None
 
     def find_url(self, url):
-        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+        with DatabaseConnection(self.db_url) as cur:
             cur.execute("SELECT id, name FROM urls WHERE name = %s", (url,))
             row = cur.fetchone()
             return dict(row) if row else None
