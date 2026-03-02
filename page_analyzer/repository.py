@@ -6,15 +6,17 @@ class UrlRepository:
         self.conn = conn
 
     def add_url(self, url):
-        with self.conn.cursor() as cur:
-            cur.execute("INTO INSERT urls (name) VALUES (%s) RETURNING id")
+        with self.conn.cursor(cursor_factory=DictCursor) as cur:
+            cur.execute(
+                "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id",
+                (url,)
+            )
             id = cur.fetchone()["id"]
-            url["id"] = id
+            self.conn.commit()
             return id
-        self.conn.commit()
 
     def get_all_urls(self):
-        with self.conn.cursor() as cur:
+        with self.conn.cursor(cursor_factory=DictCursor) as cur:
             cur.execute("SELECT * FROM urls ORDER BY id DESC")
             return [dict(row) for row in cur]
 
