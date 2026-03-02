@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Список сайтов{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12">
+        <h1 class="mb-4">Сайты</h1>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" data-test="urls">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                    <tr>
+                        <td>{{ url.id }}</td>
+                        <td>
+                            <a href="{{ url_for('get_url', id=url.id) }}" class="text-decoration-none">
+                                {{ url.name }}
+                            </a>
+                        </td>
+                        <td>{{ url.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">
+                            Пока нет добавленных сайтов
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
