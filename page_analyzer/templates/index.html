@@ -15,13 +15,13 @@
                     Проверьте сайт на SEO-пригодность
                 </p>
 
-                <!-- ВАЖНО: Добавлен action и method -->
-                <form action="{{ url_for('add_url') }}" method="post" class="mt-5">
+                <!-- ИСПРАВЛЕНО: action указывает на urls_index -->
+                <form action="{{ url_for('urls_index') }}" method="post" class="mt-5">
                     <div class="row justify-content-center g-3">
                         <div class="col-md-8">
                             <div class="input-group input-group-lg">
                                 <input type="url"
-                                       name="url"  <!-- name обязательно для отправки -->
+                                       name="url"
                                        class="form-control form-control-lg border-2 shadow-sm"
                                        placeholder="https://www.example.com"
                                        required>
