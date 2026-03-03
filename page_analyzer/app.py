@@ -63,13 +63,14 @@ def get_url(id):
             abort(404)
 
         case url_info:
+            checks = repo.get_checks(id)
             return render_template('url.html', url_info=url_info)
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def run_check(id):
     repo = UrlRepository(DATABASE_URL)
 
-    url_info = repo.find(id)
+    url_info = repo.find_id(id)
     if not url_info:
         abort(404)
 
