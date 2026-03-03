@@ -34,9 +34,38 @@ class UrlRepository:
             result = cur.fetchone()
             return result['id']
 
+    def add_check(self, url_id):
+        with DatabaseConnection(self.db_url) as cur:
+            cur.execute(
+                "INSERT INTO url_checks (url_id, created_at) VALUES (%s, NOW()) RETURNING id",
+                (url_id,)
+            )
+            result = cur.fetchone()
+            return result['id']
+
     def get_all_urls(self):
         with DatabaseConnection(self.db_url) as cur:
-            cur.execute("SELECT * FROM urls ORDER BY id DESC")
+            cur.execute("""
+                SELECT 
+                    u.*,
+                    (
+                        SELECT created_at 
+                        FROM url_checks 
+                        WHERE url_id = u.id 
+                        ORDER BY id DESC 
+                        LIMIT 1
+                    ) as last_check
+                FROM urls AS u
+                ORDER BY u.id DESC
+            """)
+            return [dict(row) for row in cur]
+
+    def get_checks(self, url_id):
+        with DatabaseConnection(self.db_url) as cur:
+            cur.execute(
+                "SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC",
+                (url_id,)
+            )
             return [dict(row) for row in cur]
 
     def find_id(self, id):

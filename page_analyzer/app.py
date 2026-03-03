@@ -65,6 +65,22 @@ def get_url(id):
         case url_info:
             return render_template('url.html', url_info=url_info)
 
+@app.route('/urls/<int:id>/checks', methods=['POST'])
+def run_check(id):
+    repo = UrlRepository(DATABASE_URL)
+
+    url_info = repo.find(id)
+    if not url_info:
+        abort(404)
+
+    try:
+        check_id = repo.add_check(id)
+        flash('Страница успешно проверена', 'success')
+    except Exception as e:
+        flash('Произошла ошибка при проверке', 'danger')
+
+    return redirect(url_for('get_url', id=id))
+
 
 @app.route('/urls', methods=['GET'])
 def get_urls():
