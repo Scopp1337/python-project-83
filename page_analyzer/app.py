@@ -63,8 +63,8 @@ def get_url(id):
             abort(404)
 
         case url_info:
-            checks = repo.get_checks(id)
-            return render_template('url.html', url_info=url_info)
+            checks= repo.get_checks(id)
+            return render_template('url.html', url_info=url_info, checks=checks)
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def run_check(id):
