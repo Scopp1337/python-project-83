@@ -54,7 +54,14 @@ class UrlRepository:
                         WHERE url_id = u.id 
                         ORDER BY id DESC 
                         LIMIT 1
-                    ) as last_check
+                    ) as last_check,
+                    (
+                        SELECT status_code 
+                        FROM url_checks 
+                        WHERE url_id = u.id 
+                        ORDER BY id DESC 
+                        LIMIT 1
+                    ) as last_status_code
                 FROM urls AS u
                 ORDER BY u.id DESC
             """)
