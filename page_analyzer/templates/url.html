@@ -7,24 +7,24 @@
     <div class="col-12">
         <h1 class="mb-4">Сайт: {{ url_info.name }}</h1>
 
-        <!-- Информация о сайте: названия слева, значения справа -->
+        <!-- Информация о сайте в виде таблицы с двумя колонками -->
         <div class="mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col"><strong>ID</strong></div>
-                        <div class="col text-end">{{ url_info.id }}</div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col"><strong>Имя</strong></div>
-                        <div class="col text-end">{{ url_info.name }}</div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col"><strong>Дата создания</strong></div>
-                        <div class="col text-end">{{ url_info.created_at.strftime('%Y-%m-%d') }}</div>
-                    </div>
-                </div>
-            </div>
+            <table class="table table-bordered table-hover" data-test="url">
+                <tbody>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td>{{ url_info.id }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Имя</strong></td>
+                        <td>{{ url_info.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Дата создания</strong></td>
+                        <td>{{ url_info.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <h2 class="mb-3">Проверки</h2>
