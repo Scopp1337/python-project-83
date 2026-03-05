@@ -5,36 +5,33 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <h1 class="mb-4">Сайт: {{ url_info.name }}</h1>
+        <h1>Сайт: {{ url_info.name }}</h1>
 
-        <!-- Информация о сайте в виде таблицы с двумя колонками -->
-        <div class="mb-4">
+        <form action="{{ url_for('check_url', id=url_info.id) }}" method="post" class="my-4">
+            <button type="submit" class="btn btn-primary">Запустить проверку</button>
+        </form>
+
+        <h2>Информация о сайте</h2>
+        <div class="table-responsive">
             <table class="table table-bordered table-hover" data-test="url">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Дата создания</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td><strong>ID</strong></td>
                         <td>{{ url_info.id }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Имя</strong></td>
                         <td>{{ url_info.name }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Дата создания</strong></td>
-                        <td>{{ url_info.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ url_info.created_at }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <h2 class="mb-3">Проверки</h2>
-
-        <div class="mb-3">
-            <form method="post" action="{{ url_for('run_check', id=url_info.id) }}">
-                <input type="submit" class="btn btn-primary" value="Запустить проверку">
-            </form>
-        </div>
-
+        <h2 class="mt-5">Проверки</h2>
         <div class="table-responsive">
             <table class="table table-bordered table-hover" data-test="checks">
                 <thead class="table-light">
@@ -51,11 +48,17 @@
                     {% for check in checks %}
                     <tr>
                         <td>{{ check.id }}</td>
-                        <td>{{ check.status_code or '---' }}</td>
-                        <td>{{ check.h1 or '---' }}</td>
-                        <td>{{ check.title or '---' }}</td>
-                        <td>{{ check.description or '---' }}</td>
-                        <td>{{ check.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if check.status_code and check.status_code >= 400 %}
+                                <span class="badge bg-danger">{{ check.status_code }}</span>
+                            {% elif check.status_code %}
+                                <span class="badge bg-success">{{ check.status_code }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ check.h1 or '' }}</td>
+                        <td>{{ check.title or '' }}</td>
+                        <td>{{ check.description or '' }}</td>
+                        <td>{{ check.created_at }}</td>
                     </tr>
                     {% else %}
                     <tr>

@@ -67,17 +67,27 @@ def get_url(id):
             return render_template('url.html', url_info=url_info, checks=checks)
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
-def run_check(id):
+def check_url(id):
     repo = UrlRepository(DATABASE_URL)
-
     url_info = repo.find_id(id)
+
     if not url_info:
         abort(404)
 
     try:
-        check_id = repo.add_check(id)
+        response = requests.get(url_info['name'], timeout=10)
+        response.raise_for_status()
+
+        repo.create_check(
+            url_id=id,
+            status_code=response.status_code,
+            h1=None,
+            title=None,
+            description=None
+        )
         flash('Страница успешно проверена', 'success')
-    except Exception as e:
+
+    except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
 
     return redirect(url_for('get_url', id=id))
@@ -95,4 +105,7 @@ def get_urls():
 def page_not_found(error):
     return render_template('errors/404.html'), 404
 
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template('errors/500.html'), 500
 

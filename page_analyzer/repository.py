@@ -86,3 +86,37 @@ class UrlRepository:
             cur.execute("SELECT id, name FROM urls WHERE name = %s", (url,))
             row = cur.fetchone()
             return dict(row) if row else None
+
+    def create_check(self, url_id, status_code, h1=None, title=None, description=None):
+        with DatabaseConnection(self.db_url) as cur:
+            cur.execute("""
+                INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+                VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+                RETURNING id
+            """, (url_id, status_code, h1, title, description))
+            result = cur.fetchone()
+            return result['id']
+
+    def get_checks_for_url(self, url_id):
+        with DatabaseConnection(self.db_url) as cur:
+            cur.execute("""
+                SELECT * FROM url_checks
+                WHERE url_id = %s
+                ORDER BY id DESC
+            """, (url_id,))
+            return [dict(row) for row in cur]
+
+    def get_last_check_for_urls(self):
+        with DatabaseConnection(self.db_url) as cur:
+            cur.execute("""
+                SELECT DISTINCT ON (url_id) url_id, status_code, created_at
+                FROM url_checks
+                ORDER BY url_id, id DESC
+            """)
+            result = {}
+            for row in cur:
+                result[row['url_id']] = {
+                    'status_code': row['status_code'],
+                    'created_at': row['created_at']
+                }
+            return result
