@@ -109,14 +109,21 @@ class UrlRepository:
     def get_last_check_for_urls(self):
         with DatabaseConnection(self.db_url) as cur:
             cur.execute("""
-                SELECT DISTINCT ON (url_id) url_id, status_code, created_at
+                SELECT DISTINCT ON (url_id) 
+                    url_id, 
+                    status_code, 
+                    created_at
                 FROM url_checks
                 ORDER BY url_id, id DESC
             """)
+
             result = {}
             for row in cur:
-                result[row['url_id']] = {
-                    'status_code': row['status_code'],
-                    'created_at': row['created_at']
+                row_dict = dict(row)
+                url_id = int(row_dict['url_id'])
+                result[url_id] = {
+                    'status_code': row_dict['status_code'],
+                    'created_at': row_dict['created_at']
                 }
+
             return result

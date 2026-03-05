@@ -97,7 +97,8 @@ def check_url(id):
 def get_urls():
     repo = UrlRepository(DATABASE_URL)
     urls = repo.get_all_urls()
-
+    last_checks = repo.get_last_check_for_urls()
+    
     return render_template('urls.html', urls=urls)
 
 

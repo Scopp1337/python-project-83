@@ -29,6 +29,8 @@
                         <td>
                             {% if last_checks and last_checks[url.id] %}
                                 {{ last_checks[url.id].status_code }}
+                            {% else %}
+
                             {% endif %}
                         </td>
                         <td>{{ url.created_at }}</td>
