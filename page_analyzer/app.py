@@ -75,7 +75,7 @@ def check_url(id):
         abort(404)
 
     try:
-        response = requests.get(url_info['name'], timeout=10)
+        response = requests.get(url_info['name'], timeout=0.3)
         response.raise_for_status()
 
         repo.create_check(
@@ -98,8 +98,8 @@ def get_urls():
     repo = UrlRepository(DATABASE_URL)
     urls = repo.get_all_urls()
     last_checks = repo.get_last_check_for_urls()
-    
-    return render_template('urls.html', urls=urls)
+
+    return render_template('urls.html', urls=urls, last_checks=last_checks)
 
 
 @app.errorhandler(404)
