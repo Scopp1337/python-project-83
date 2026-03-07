@@ -28,17 +28,9 @@ class UrlRepository:
     def add_url(self, url):
         with DatabaseConnection(self.db_url) as cur:
             cur.execute(
-                "INSERT INTO urls (name, created_at) VALUES (%s, NOW()) RETURNING id",
+                "INSERT INTO urls (name, created_at) "
+                "VALUES (%s, NOW()) RETURNING id",
                 (url,)
-            )
-            result = cur.fetchone()
-            return result['id']
-
-    def add_check(self, url_id):
-        with DatabaseConnection(self.db_url) as cur:
-            cur.execute(
-                "INSERT INTO url_checks (url_id, created_at) VALUES (%s, NOW()) RETURNING id",
-                (url_id,)
             )
             result = cur.fetchone()
             return result['id']
@@ -67,14 +59,6 @@ class UrlRepository:
             """)
             return [dict(row) for row in cur]
 
-    def get_checks(self, url_id):
-        with DatabaseConnection(self.db_url) as cur:
-            cur.execute(
-                "SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC",
-                (url_id,)
-            )
-            return [dict(row) for row in cur]
-
     def find_id(self, id):
         with DatabaseConnection(self.db_url) as cur:
             cur.execute("SELECT * FROM urls WHERE id = %s", (id,))
@@ -87,17 +71,25 @@ class UrlRepository:
             row = cur.fetchone()
             return dict(row) if row else None
 
-    def create_check(self, url_id, status_code, h1=None, title=None, description=None):
+    def create_check(
+            self,
+            url_id,
+            status_code,
+            h1=None,
+            title=None,
+            description=None
+    ):
         with DatabaseConnection(self.db_url) as cur:
             cur.execute("""
-                INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
+                INSERT INTO url_checks 
+                (url_id, status_code, h1, title, description, created_at)
                 VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
                 RETURNING id
             """, (url_id, status_code, h1, title, description))
             result = cur.fetchone()
             return result['id']
 
-    def get_checks_for_url(self, url_id):
+    def get_checks(self, url_id):
         with DatabaseConnection(self.db_url) as cur:
             cur.execute("""
                 SELECT * FROM url_checks

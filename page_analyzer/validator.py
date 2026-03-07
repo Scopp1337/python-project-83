@@ -22,7 +22,10 @@ def validate_url(url):
         case (True, _, _):
             errors['url'] = 'URL не может быть пустым'
         case (_, True, _):
-            errors['url'] = 'Слишком длинный URL (должен быть короче 255 символов)'
+            errors['url'] = (
+                'Слишком длинный URL '
+                '(должен быть короче 255 символов)'
+            )
         case (_, _, True):
             errors['url'] = 'Некорректный формат URL'
 

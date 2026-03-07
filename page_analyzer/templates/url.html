@@ -55,9 +55,9 @@
                                 <span class="badge bg-success">{{ check.status_code }}</span>
                             {% endif %}
                         </td>
-                        <td>{{ check.h1 or '' }}</td>
-                        <td>{{ check.title or '' }}</td>
-                        <td>{{ check.description or '' }}</td>
+                        <td>{{ truncate(check.h1) if check.h1 else '' }}</td>
+                        <td>{{ truncate(check.title) if check.title else '' }}</td>
+                        <td>{{ truncate(check.description) if check.description else '' }}</td>
                         <td>{{ check.created_at }}</td>
                     </tr>
                     {% else %}

@@ -1,7 +1,7 @@
 import os
 
 import requests
-import psycopg2
+from dotenv import load_dotenv
 from flask import (
     Flask,
     abort,
@@ -12,9 +12,9 @@ from flask import (
     url_for,
 )
 
-from dotenv import load_dotenv
-from page_analyzer.validator import normalize_url, validate_url
+from page_analyzer.parser import get_data, truncate_text
 from page_analyzer.repository import UrlRepository
+from page_analyzer.validator import normalize_url, validate_url
 
 load_dotenv()
 
@@ -35,7 +35,7 @@ def urls_index():
     errors = validate_url(url)
 
     match errors:
-        case {'url': error_message}:
+        case {'url': _}:
             flash('Ошибка! Некорректный URL', 'danger')
             return render_template('index.html'), 422
 
@@ -63,8 +63,14 @@ def get_url(id):
             abort(404)
 
         case url_info:
-            checks= repo.get_checks(id)
-            return render_template('url.html', url_info=url_info, checks=checks)
+            checks = repo.get_checks(id)
+            return render_template(
+                'url.html',
+                url_info=url_info,
+                checks=checks,
+                truncate=truncate_text
+            )
+
 
 @app.route('/urls/<int:id>/checks', methods=['POST'])
 def check_url(id):
@@ -75,15 +81,17 @@ def check_url(id):
         abort(404)
 
     try:
-        response = requests.get(url_info['name'], timeout=0.3)
+        response = requests.get(url_info['name'], timeout=10)
         response.raise_for_status()
+
+        seo_data = get_data(response.text)
 
         repo.create_check(
             url_id=id,
             status_code=response.status_code,
-            h1=None,
-            title=None,
-            description=None
+            h1=seo_data['h1'],
+            title=seo_data['title'],
+            description=seo_data['description']
         )
         flash('Страница успешно проверена', 'success')
 
@@ -106,7 +114,7 @@ def get_urls():
 def page_not_found(error):
     return render_template('errors/404.html'), 404
 
+
 @app.errorhandler(500)
 def internal_server_error(error):
     return render_template('errors/500.html'), 500
-
