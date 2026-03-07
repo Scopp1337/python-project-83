@@ -13,9 +13,9 @@ def validate_url(url):
     errors = {}
 
     checks = (
-        url == "",  # пустой
-        len(url) > 255,  # слишком длинный
-        not validators.url(url)  # невалидный
+        url == "",
+        len(url) > 255,
+        not validators.url(url)
     )
 
     match checks:
