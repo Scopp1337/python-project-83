@@ -3,7 +3,7 @@
 {% block title %}Список сайтов{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-12">
         <h1 class="mb-4">Сайты</h1>
 
@@ -14,7 +14,7 @@
                         <th>ID</th>
                         <th>Имя</th>
                         <th>Последняя проверка</th>
-                        <th>Дата создания</th>
+                        <th>Код ответа</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -22,18 +22,24 @@
                     <tr>
                         <td>{{ url.id }}</td>
                         <td>
-                            <a href="{{ url_for('get_url', id=url.id) }}">
+                            <a href="{{ url_for('get_url', id=url.id) }}" class="text-decoration-none">
                                 {{ url.name }}
                             </a>
                         </td>
                         <td>
-                            {% if last_checks and last_checks[url.id] %}
-                                {{ last_checks[url.id].status_code }}
-                            {% else %}
-
+                            {% if last_checks[url.id] and last_checks[url.id].created_at %}
+                                {{ last_checks[url.id].created_at.strftime('%Y-%m-%d') }}
                             {% endif %}
                         </td>
-                        <td>{{ url.created_at }}</td>
+                        <td>
+                            {% if last_checks[url.id] and last_checks[url.id].status_code %}
+                                {% if last_checks[url.id].status_code >= 400 %}
+                                    <span class="badge bg-danger">{{ last_checks[url.id].status_code }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ last_checks[url.id].status_code }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
