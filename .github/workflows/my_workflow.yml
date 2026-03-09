@@ -1,4 +1,4 @@
-name: my check
+name: CI Check
 
 on:
   - push
@@ -12,16 +12,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python3
-
         uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           make install
+
       - name: Run linter
-        run:
+        run: make lint
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
